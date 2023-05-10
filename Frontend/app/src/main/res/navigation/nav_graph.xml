@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SignIn">
+
+    <fragment
+        android:id="@+id/SignIn"
+        android:name="com.example.myexperiments.SignIn"
+        android:fontFamily="@font/latobold"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/sign_in">
+
+        <action
+            android:id="@+id/action_SignIn_to_Register"
+            app:destination="@id/Register" />
+        <action
+            android:id="@+id/action_SignIn_to_Dashboard"
+            app:destination="@id/Dashboard" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Register"
+        android:name="com.example.myexperiments.Register"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/register">
+
+        <action
+            android:id="@+id/action_Register_to_SignIn"
+            app:destination="@id/SignIn" />
+        <action
+            android:id="@+id/action_Register_to_UserProfile"
+            app:destination="@id/UserProfile" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Dashboard"
+        android:name="com.example.myexperiments.Dashboard"
+        android:label="@string/third_fragment_label"
+        tools:layout="@layout/dashboard">
+
+        <action
+            android:id="@+id/action_Dashboard_to_SignIn"
+            app:destination="@id/SignIn" />
+        <action
+            android:id="@+id/action_Dashboard_to_Workouts"
+            app:destination="@id/Workouts" />
+        <action
+            android:id="@+id/action_Dashboard_to_UserProfile"
+            app:destination="@id/UserProfile" />
+        <action
+            android:id="@+id/action_Dashboard_to_Coach"
+            app:destination="@id/Coach" />
+        <action
+            android:id="@+id/action_Dashboard_to_Manager"
+            app:destination="@id/Manager" />
+        <action
+            android:id="@+id/action_Dashboard_to_AddWorkout"
+            app:destination="@id/AddWorkout" />
+        <action
+            android:id="@+id/action_Dashboard_to_Chat"
+            app:destination="@id/Chat" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Workouts"
+        android:name="com.example.myexperiments.Workout"
+        android:label="@string/Workout"
+        tools:layout="@layout/dashboard">
+
+        <action
+            android:id="@+id/action_Workout_to_Dashboard"
+            app:destination="@id/Dashboard" />
+        <action
+            android:id="@+id/action_Workout_to_Videos"
+            app:destination="@id/Videos" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/UserProfile"
+        android:name="com.example.myexperiments.UserProfile"
+        android:label="@string/UserProfile"
+        tools:layout="@layout/user_profile">
+
+        <action
+            android:id="@+id/action_UserProfile_to_Register"
+            app:destination="@id/Register" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Coach"
+        android:name="com.example.myexperiments.Coach"
+        android:label="@string/Coach"
+        tools:layout="@layout/coach">
+        <action
+            android:id="@+id/action_Coach_to_AddWorkout"
+            app:destination="@id/AddWorkout" />
+        <action
+            android:id="@+id/action_Coach_to_Workouts"
+            app:destination="@id/Workouts" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/AddWorkout"
+        android:name="com.example.myexperiments.WorkoutEditer"
+        android:label="@string/WorkoutEditer"
+        tools:layout="@layout/add_remove_workout">
+        <action
+            android:id="@+id/action_Addworkout_to_Dashboard"
+            app:destination="@id/Dashboard" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Manager"
+        android:name="com.example.myexperiments.Manager"
+        android:label="@string/Manager"
+        tools:layout="@layout/manager">
+
+        <action
+            android:id="@+id/action_Manager_to_Link"
+            app:destination="@id/Link" />
+        <action
+            android:id="@+id/action_Manager_to_Coach"
+            app:destination="@id/Coach"/>
+        <action
+            android:id="@+id/action_Manager_to_CoachLink"
+            app:destination="@id/CoachLink"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/Link"
+        android:name="com.example.myexperiments.Link"
+        android:fontFamily="@font/latobold"
+        android:label="@string/Link"
+        tools:layout="@layout/link">
+
+        <action
+            android:id="@+id/action_Link_to_Manager"
+            app:destination="@id/Manager" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Videos"
+        android:name="com.example.myexperiments.Videos"
+        android:label="Videos"
+        tools:layout="@layout/videos">
+
+        <action
+            android:id="@+id/action_Videos_to_Dashboard"
+            app:destination="@id/Dashboard"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/CoachLink"
+        android:name="com.example.myexperiments.CoachLink"
+        android:fontFamily="@font/latobold"
+        android:label="CoachLink"
+        tools:layout="@layout/coach_link">
+
+        <action
+            android:id="@+id/action_CoachLink_to_Manager"
+            app:destination="@id/Manager" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/Chat"
+        android:name="com.example.myexperiments.Chat"
+        android:fontFamily="@font/latobold"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/chat">
+    </fragment>
+</navigation>

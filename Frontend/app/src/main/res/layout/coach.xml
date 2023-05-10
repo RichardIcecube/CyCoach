@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+        <import type="java.util.List" />
+        <import type="org.json.JSONObject" />
+        <variable name="firstName" type="String" />
+        <variable name="lastName" type="String" />
+        <variable
+            name="hasAthletes"
+            type="boolean" />
+    </data>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Dashboard">
+
+        <Button
+            android:id="@+id/addWorkoutCoach"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/isu_red"
+            android:fontFamily="@font/latobold"
+            android:text="@string/WorkoutEditer"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.22" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/Coach + ' ' + lastName}"
+            android:textSize="35sp"
+            android:fontFamily="@font/latobold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.12"/>
+
+        <TextView
+            android:id="@+id/no_workouts_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Athletes to Display"
+            android:textSize="30sp"
+            android:fontFamily="@font/latoregular"
+            android:visibility="@{hasAthletes ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
+
+        <TableLayout
+            android:id="@+id/table_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="@{hasAthletes ? View.VISIBLE : View.GONE}"
+            android:paddingBottom="500px"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TableRow
+                android:id="@+id/header_row"
+                android:layout_width="100px"
+                android:background="@color/isu_yellow">
+
+                <TextView
+                    android:layout_width="450px"
+                    android:layout_height="100px"
+                    android:fontFamily="@font/latobold"
+                    android:gravity="center"
+                    android:text="Athlete"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="375px"
+                    android:fontFamily="@font/latobold"
+                    android:gravity="center"
+                    android:text="Workout Page"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="350px"
+                    android:fontFamily="@font/latobold"
+                    android:gravity="center"
+                    android:text="@string/AddWorkout"
+                    android:textColor="@android:color/white" />
+            </TableRow>
+        </TableLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

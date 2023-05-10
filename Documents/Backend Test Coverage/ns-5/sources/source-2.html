@@ -1,0 +1,278 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ManagerController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.Managers</a>
+</div>
+
+<h1>Coverage Summary for Class: ManagerController (coms309.Managers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ManagerController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89.1%
+  </span>
+  <span class="absValue">
+    (57/64)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.Managers;
+&nbsp;
+&nbsp;import coms309.Athletes.AthleteRepository;
+&nbsp;import coms309.Athletes.Athlete;
+&nbsp;import coms309.Coaches.Coach;
+&nbsp;import coms309.Coaches.CoachRepository;
+&nbsp;import coms309.Users.User;
+&nbsp;import coms309.Users.UserRepository;
+&nbsp;import io.swagger.annotations.Api;
+&nbsp;import io.swagger.annotations.ApiOperation;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Api(value = &quot;Manager Controller&quot;, description = &quot;REST API related to Manager Entity&quot;, tags = &quot;ManagerController&quot;)
+&nbsp;@RestController
+<b class="fc">&nbsp;public class ManagerController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ManagerRepository managerRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    AthleteRepository athleteRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    CoachRepository coachRepository;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all managers&quot;, response = Manager.class, tags = &quot;getAllManagers&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers&quot;})
+<b class="fc">&nbsp;    List&lt;Manager&gt; getAllManagers() { return this.managerRepository.findAll(); }</b>
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a manager by id&quot;, response = Manager.class, tags = &quot;getManagerById&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers/{id}&quot;})
+<b class="fc">&nbsp;    Manager getManagerById(@PathVariable int id) { return this.managerRepository.findById(id); }</b>
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all users&quot;, response = User.class, tags = &quot;getAllUsers&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers/{managerId}/users&quot;})
+&nbsp;    List&lt;User&gt; getAllUsers(@PathVariable int managerId)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = this.managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        if(manager == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return userRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Link together an athlete and a coach&quot;, response = String.class, tags = &quot;linkAthleteCoach&quot;)
+&nbsp;    @PutMapping( path = {&quot;/managers/{managerId}/coaches/{coachId}/athletes/{athleteId}&quot;})
+&nbsp;    public String linkAthleteCoach(@PathVariable int managerId, @PathVariable int coachId, @PathVariable int athleteId)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Athlete athlete = athleteRepository.findById(athleteId);</b>
+<b class="fc">&nbsp;        if(manager == null || coach == null || athlete == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if(coach.getAthleteList().contains(athlete))</b>
+&nbsp;        {
+<b class="fc">&nbsp;            return failure + &quot;\n Athlete is already assigned to this coach.&quot;;</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        athlete.setCoach(coach);</b>
+<b class="fc">&nbsp;        athleteRepository.save(athlete);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Unlink an athlete and coach&quot;, response = String.class, tags = &quot;unlinkAthlete&quot;)
+&nbsp;    @PutMapping(path = {&quot;/managers/{managerId}/athletes/{athleteId}/unlink&quot;})
+&nbsp;    public String unlinkAthlete(@PathVariable int managerId, @PathVariable int athleteId){
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        Athlete athlete = athleteRepository.findById(athleteId);</b>
+<b class="fc">&nbsp;        if(manager == null || athlete == null) {</b>
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(athlete.getCoach() == null) return failure + &quot;\n Athlete is not assigned to a coach&quot;;</b>
+<b class="fc">&nbsp;        athlete.setCoach(null);</b>
+<b class="fc">&nbsp;        athleteRepository.save(athlete);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all the coaches&quot;, response = Coach.class, tags = &quot;getAllCoaches&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers/{managerId}/coaches&quot;})
+&nbsp;    public List&lt;Coach&gt; getAllCoaches(@PathVariable int managerId)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        if(manager == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return coachRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all athletes&quot;, response = Athlete.class, tags = &quot;getAllAthletes&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers/{managerId}/athletes&quot;})
+&nbsp;    public List&lt;Athlete&gt; getAllAthletes(@PathVariable int managerId)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        if(manager == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return athleteRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all of a coaches athletes&quot;, response = Athlete.class, tags = &quot;getCoachesAthletes&quot;)
+&nbsp;    @GetMapping( path = {&quot;/managers/{managerId}/coaches/{coachId}/athletes&quot;})
+&nbsp;    public List&lt;Athlete&gt; getCoachesAthletes(@PathVariable int managerId, @PathVariable int coachId)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(manager == null || coach == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return coach.getAthleteList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Delete a user&quot;, response = String.class, tags = &quot;deleteUser&quot;)
+&nbsp;    @DeleteMapping( path = {&quot;/managers/{managerId}/users/{id}&quot;})
+&nbsp;    public String deleteUser(@PathVariable int managerId, @PathVariable int id)
+&nbsp;    {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        User user = userRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(manager == null || user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        userRepository.deleteById(id);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of a managers coaches&quot;, response = Coach.class, tags = &quot;getManagersCoaches&quot;)
+&nbsp;    @GetMapping(path = {&quot;/managers/{managerId}/coachesList&quot;})
+&nbsp;    public List&lt;Coach&gt; getManagersCoaches(@PathVariable int managerId){
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        if(manager == null) return null;</b>
+<b class="fc">&nbsp;        return manager.getCoachList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Link a coach and a manager&quot;, response = String.class, tags = &quot;linkCoachManager&quot;)
+&nbsp;    @PutMapping(path = {&quot;/managers/{managerId}/coaches/{coachId}&quot;})
+&nbsp;    public String linkCoachManager(@PathVariable int managerId, @PathVariable int coachId) {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null || manager == null) return null;</b>
+<b class="fc">&nbsp;        if(manager.getCoachList().contains(coach)){</b>
+<b class="fc">&nbsp;            return failure + &quot;\n Coach is already assigned to this manager.&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        coach.setManager(manager);</b>
+<b class="fc">&nbsp;        coachRepository.save(coach);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Unlink a coach and a manager&quot;, response = String.class, tags = &quot;unlinkCoachManager&quot;)
+&nbsp;    @PutMapping(path = {&quot;/managers/{managerId}/coaches/{coachId}/unlink&quot;})
+&nbsp;    public String unlinkCoachManager(@PathVariable int managerId, @PathVariable int coachId) {
+<b class="fc">&nbsp;        Manager manager = managerRepository.findById(managerId);</b>
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null || manager == null) return null;</b>
+<b class="fc">&nbsp;        if(coach.getManager() == null) return failure + &quot;\nCoach is not assigned to a manager.&quot;;</b>
+<b class="fc">&nbsp;        coach.setManager(null);</b>
+<b class="fc">&nbsp;        coachRepository.save(coach);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-05-04 13:05</div>
+</div>
+</body>
+</html>

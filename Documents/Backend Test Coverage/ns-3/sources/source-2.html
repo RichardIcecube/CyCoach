@@ -1,0 +1,371 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CoachController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.Coaches</a>
+</div>
+
+<h1>Coverage Summary for Class: CoachController (coms309.Coaches)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CoachController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.6%
+  </span>
+  <span class="absValue">
+    (95/111)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.Coaches;
+&nbsp;
+&nbsp;import coms309.Athletes.Athlete;
+&nbsp;import coms309.Athletes.AthleteRepository;
+&nbsp;import coms309.Exercises.ExerciseRepository;
+&nbsp;import coms309.Exercises.Exercise;
+&nbsp;import coms309.Managers.Manager;
+&nbsp;import coms309.Workout.Workout;
+&nbsp;import coms309.Workout.WorkoutRepository;
+&nbsp;import io.swagger.annotations.Api;
+&nbsp;import io.swagger.annotations.ApiOperation;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;
+&nbsp;@Api(value = &quot;Coach Controller&quot;, description = &quot;REST API related to Coach Entity&quot;, tags=&quot;CoachController&quot;)
+&nbsp;@RestController
+<b class="fc">&nbsp;public class CoachController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    CoachRepository coachRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    AthleteRepository athleteRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    WorkoutRepository workoutRepository;
+&nbsp;    @Autowired
+&nbsp;    ExerciseRepository exerciseRepository;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get individual Coaches by their Coach ID&quot;, response = Coach.class, tags = &quot;getCoachById&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}&quot;})
+<b class="fc">&nbsp;    public Coach getCoachById(@PathVariable int coachId) { return this.coachRepository.findById(coachId); }</b>
+&nbsp;    @ApiOperation(value = &quot;Get a Coach&#39;s list of assigned Athletes&quot;, response = Athlete.class, tags = &quot;getAthleteList&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/athletes&quot;})
+&nbsp;    public List&lt;Athlete&gt; getAthleteList(@PathVariable int coachId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return coach.getAthleteList();</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get the list of Workouts created by a Coach&quot;, response = Workout.class, tags = &quot;getWorkoutList&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/workouts&quot;})
+&nbsp;    public List&lt;Workout&gt; getWorkoutList(@PathVariable int coachId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return coach.getWorkoutList();</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get a Workout saved in the database by its Workout ID&quot;, response = Workout.class, tags = &quot;getWorkoutById&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/workouts/{workoutId}&quot;})
+&nbsp;    public Workout getWorkoutById(@PathVariable int coachId, @PathVariable int workoutId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Workout workout = this.workoutRepository.findById(workoutId);</b>
+<b class="fc">&nbsp;        if(coach == null || workout == null || workout.getCoach() != coach) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return workout;</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get the list of all saved Exercises in the database&quot;, response = Exercise.class, tags = &quot;getExerciseList&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/exercises&quot;})
+&nbsp;    public List&lt;Exercise&gt; getExerciseList(@PathVariable int coachId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return exerciseRepository.findAll();</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get an individual Exercise saved in the database by its Exercise ID&quot;, response = Exercise.class, tags = &quot;getExerciseById&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/exercises/{exerciseId}&quot;})
+&nbsp;    public Exercise getExerciseById(@PathVariable int coachId, @PathVariable int exerciseId){
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null){</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return exerciseRepository.findById(exerciseId);</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get the Workout List of an Athlete present in the Coach&#39;s Athlete List&quot;, response = Workout.class, tags = &quot;getAthleteWorkoutList&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/athletes/{athleteId}/workouts&quot;})
+&nbsp;    public List&lt;Workout&gt; getAthleteWorkoutList(@PathVariable int coachId, @PathVariable int athleteId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Athlete athlete = this.athleteRepository.findById(athleteId);</b>
+<b class="fc">&nbsp;        if(coach == null || athlete == null) return null;</b>
+<b class="fc">&nbsp;        if(!coach.getAthleteList().contains(athlete)) return null;</b>
+<b class="fc">&nbsp;        return athlete.getWorkoutList();</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Create and save a new Workout to the database&quot;, response = String.class, tags = &quot;createWorkout&quot;)
+&nbsp;    @PostMapping(path = &quot;/coaches/{coachId}/workouts&quot;)
+&nbsp;    String createWorkout(@PathVariable int coachId, @RequestBody Workout workout)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(workout == null || coach == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(workout.getExercise().getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            workout.setExercise(exerciseRepository.findByName((workout.getExercise().getExerciseName())));</b>
+&nbsp;        }
+&nbsp;        else
+&nbsp;        {
+<b class="fc">&nbsp;            exerciseRepository.save(workout.getExercise());</b>
+<b class="fc">&nbsp;            workout.setExercise(workout.getExercise());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        workout.setCoach(coach);</b>
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Create and save a new Exercise to the database&quot;, response = String.class, tags = &quot;createExercise&quot;)
+&nbsp;    @PostMapping(path = &quot;/coaches/{coachId}/exercises&quot;)
+&nbsp;    String createExercise(@PathVariable int coachId, @RequestBody Exercise exercise)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(exercise == null || coach == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(exercise.getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure + &quot;\n That exercise may already exist!&quot;;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        exerciseRepository.save(exercise);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Update an existing Exercise saved in the database&quot;, response = Exercise.class, tags = &quot;updateExercise&quot;)
+&nbsp;    @PutMapping(path = &quot;/coaches/{coachId}/exercises/{id}&quot;)
+&nbsp;    Exercise updateExercise(@PathVariable int coachId, @PathVariable int id, @RequestBody Exercise request)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Exercise exercise = exerciseRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(exercise == null || coach == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(request.getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;        else
+&nbsp;        {
+<b class="fc">&nbsp;            exercise.setExerciseName(request.getExerciseName());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        exerciseRepository.save(exercise);</b>
+<b class="fc">&nbsp;        return exerciseRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Update an existing Workout in the database&quot;, response = Workout.class, tags = &quot;updateWorkout&quot;)
+&nbsp;    @PutMapping(path = &quot;/coaches/{coachId}/workouts/{id}&quot;)
+&nbsp;    Workout updateWorkout(@PathVariable int coachId, @PathVariable int id, @RequestBody Workout request)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null || coach == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        workout.setReps(request.getReps());</b>
+<b class="fc">&nbsp;        workout.setRest(request.getRest());</b>
+<b class="fc">&nbsp;        workout.setDuration(request.getDuration());</b>
+<b class="fc">&nbsp;        workout.setSets(request.getSets());</b>
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(request.getExercise().getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            workout.setExercise(exerciseRepository.findByName(request.getExercise().getExerciseName()));</b>
+&nbsp;        }
+&nbsp;        else
+&nbsp;        {
+<b class="fc">&nbsp;            exerciseRepository.save(request.getExercise());</b>
+<b class="fc">&nbsp;            workout.setExercise(request.getExercise());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return workoutRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Update an Assigned Athlete&#39;s Workout list&quot;, response = Workout.class, tags = &quot;updateAthleteWorkoutList&quot;)
+&nbsp;    @PutMapping(path = {&quot;/coaches/{coachId}/athletes/{athleteId}/workouts/{workoutId}&quot;})
+&nbsp;    public List&lt;Workout&gt; updateAthleteWorkoutList(@PathVariable int coachId, @PathVariable int athleteId,
+&nbsp;                                                  @PathVariable int workoutId){
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Athlete athlete = this.athleteRepository.findById(athleteId);</b>
+<b class="fc">&nbsp;        Workout workout = this.workoutRepository.findById(workoutId);</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        if(coach == null || athlete == null || workout == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Athlete&gt; athleteList = coach.getAthleteList();</b>
+&nbsp;
+<b class="fc">&nbsp;        if(athleteList == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        for(int i = 0; i &lt; athleteList.size(); i++)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            if(athleteList.get(i).equals(athlete))</b>
+&nbsp;            {
+<b class="fc">&nbsp;                athlete.addWorkout(workout);</b>
+<b class="fc">&nbsp;                athleteList.set(i, athlete);</b>
+<b class="fc">&nbsp;                coach.setAthleteList(athleteList);</b>
+<b class="fc">&nbsp;                coachRepository.save(coach);</b>
+<b class="fc">&nbsp;                return athleteRepository.findById(athleteId).getWorkoutList();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Delete an existing Workout in the database&quot;, response = String.class, tags = &quot;deleteWorkout&quot;)
+&nbsp;    @DeleteMapping(path = {&quot;/coaches/{coachId}/workouts/{workoutId}&quot;})
+&nbsp;    public String deleteWorkout(@PathVariable int coachId, @PathVariable int workoutId)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Workout workout = this.workoutRepository.findById(workoutId);</b>
+<b class="fc">&nbsp;        if(coach == null || workout == null || workout.getCoach() != coach) { return failure; }</b>
+<b class="fc">&nbsp;        workoutRepository.delete(workout);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Delete an existing Exercise in the database&quot;, response = String.class, tags = &quot;deleteExercise&quot;)
+&nbsp;    @DeleteMapping(path = {&quot;/coaches/{coachId}/exercises/{exerciseId}&quot;})
+&nbsp;    public String deleteExercise(@PathVariable int coachId, @PathVariable int exerciseId)
+&nbsp;    {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Exercise exercise = this.exerciseRepository.findById(exerciseId);</b>
+<b class="fc">&nbsp;        if(coach == null || exercise == null) { return failure;}</b>
+<b class="fc">&nbsp;        exerciseRepository.deleteById(exercise.getId());</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Delete a Workout from an Assigned Athlete&#39;s Workout list&quot;, response = String.class, tags = &quot;deleteAthleteWorkout&quot;)
+&nbsp;    @DeleteMapping(path = {&quot;/coaches/{coachId}/athletes/{athleteId}/workouts/{workoutId}&quot;})
+&nbsp;    public String deleteAthleteWorkout(@PathVariable int coachId, @PathVariable int athleteId,
+&nbsp;                                       @PathVariable int workoutId) {
+<b class="fc">&nbsp;        Coach coach = this.coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        Athlete athlete = this.athleteRepository.findById(athleteId);</b>
+<b class="fc">&nbsp;        Workout workout = this.workoutRepository.findById(workoutId);</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Athlete&gt; athleteList = coach.getAthleteList();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; athleteList.size(); i++)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            if(athleteList.get(i).equals(athlete))</b>
+&nbsp;            {
+<b class="fc">&nbsp;                athlete.removeWorkout(workout);</b>
+<b class="fc">&nbsp;                athleteList.set(i, athlete);</b>
+<b class="fc">&nbsp;                coach.setAthleteList(athleteList);</b>
+<b class="fc">&nbsp;                coachRepository.save(coach);</b>
+<b class="fc">&nbsp;                return success;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return failure;</b>
+&nbsp;    }
+&nbsp;    @ApiOperation(value = &quot;Get the Coach&#39;s Assigned Manager&quot;, response = Manager.class, tags = &quot;getManager&quot;)
+&nbsp;    @GetMapping(path = {&quot;/coaches/{coachId}/manager&quot;})
+&nbsp;    public Manager getManager(@PathVariable int coachId){
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null) return null;</b>
+<b class="fc">&nbsp;        return coach.getManager();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-05-04 13:05</div>
+</div>
+</body>
+</html>

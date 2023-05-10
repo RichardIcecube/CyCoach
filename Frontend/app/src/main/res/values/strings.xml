@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">MyExperiments</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">CyCoach</string>
+    <string name="second_fragment_label">Registration</string>
+    <string name="third_fragment_label">Dashboard</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="Signin">Sign in</string>
+    <string name="Email">Email</string>
+    <string name="Coach">Coach</string>
+
+
+    <string name="Workout">Workouts</string>
+    <string name="AddWorkouts">Add Workouts</string>
+    <string name="AddWorkout">Add Workout</string>
+    <string name="RemoveWorkout">Remove Workout</string>
+    <string name="WorkoutEditer">Workout Editer</string>
+    <string name="RemoveExercise">Remove Exercise</string>
+    <string name="AddExercise">Add Exercise</string>
+    <string name="View">View Workouts</string>
+    <string name="Athletes">View Athletes</string>
+    <string name="AddRemove">Add/Remove</string>
+    <string name="Diet">Diet</string>
+    <string name="UserProfile">UserProfile</string>
+
+    <string name="Manager">Manager</string>
+    <string name="Link">Link</string>
+
+    <string name="Dashboard">Dashboard</string>
+    <string name="Register">Register</string>
+    <string name="Register_Text">------------------------------  or  ------------------------------</string>
+    <string name="enter_password">Password</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+</resources>

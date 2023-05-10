@@ -1,0 +1,298 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > WebSocketServer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.Websockets</a>
+</div>
+
+<h1>Coverage Summary for Class: WebSocketServer (coms309.Websockets)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WebSocketServer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    41.7%
+  </span>
+  <span class="absValue">
+    (5/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    10.4%
+  </span>
+  <span class="absValue">
+    (10/96)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.Websockets;
+&nbsp;
+&nbsp;import coms309.Athletes.Athlete;
+&nbsp;import coms309.Athletes.AthleteRepository;
+&nbsp;import coms309.Coaches.Coach;
+&nbsp;import coms309.Coaches.CoachRepository;
+&nbsp;import coms309.Managers.Manager;
+&nbsp;import coms309.Users.User;
+&nbsp;import coms309.Users.UserRepository;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import javax.websocket.*;
+&nbsp;import javax.websocket.server.PathParam;
+&nbsp;import javax.websocket.server.ServerEndpoint;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Hashtable;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@ServerEndpoint(&quot;/websocket/{userId}&quot;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class WebSocketServer {</b>
+&nbsp;
+&nbsp;
+&nbsp;    private static UserRepository userRepository;
+&nbsp;
+&nbsp;    private static AthleteRepository athleteRepository;
+&nbsp;
+&nbsp;    private static CoachRepository coachRepository;
+&nbsp;    @Autowired
+&nbsp;    public void setUserRepository(UserRepository repo) {
+<b class="fc">&nbsp;        userRepository = repo;</b>
+&nbsp;    }
+&nbsp;    @Autowired
+&nbsp;    public void setAthleteRepository(AthleteRepository repo) {
+<b class="fc">&nbsp;        athleteRepository = repo;</b>
+&nbsp;    }
+&nbsp;    @Autowired
+&nbsp;    public void setCoachRepository(CoachRepository repo) {
+<b class="fc">&nbsp;        coachRepository = repo;</b>
+&nbsp;    }
+<b class="fc">&nbsp;    private static Map&lt;Session, String&gt; sessionUsernameMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static Map &lt; String, Session &gt; usernameSessionMap = new Hashtable &lt; &gt; ();</b>
+<b class="fc">&nbsp;    private static Map &lt; String, String &gt; usernamePrefix = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static Map&lt;String, User&gt; usernameUserMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static Map&lt;User, String&gt; userUsernameMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);</b>
+&nbsp;
+&nbsp;    @OnOpen
+&nbsp;    public void onOpen(Session session, @PathParam(&quot;userId&quot;) int userId)
+&nbsp;            throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Entered into Open&quot;);</b>
+<b class="nc">&nbsp;        User user = userRepository.findById(userId);</b>
+<b class="nc">&nbsp;        if(user == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        String username = user.getEmailAddress().split(&quot;@&quot;)[0];</b>
+&nbsp;
+<b class="nc">&nbsp;        String prefix = &quot;&quot;;</b>
+<b class="nc">&nbsp;        switch(user.getClassType())</b>
+&nbsp;        {
+&nbsp;            case 1:
+<b class="nc">&nbsp;                prefix = &quot;[Athlete] &quot;;</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case 2:
+<b class="nc">&nbsp;                prefix = &quot;[Coach] &quot;;</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case 3:
+<b class="nc">&nbsp;                prefix = &quot;[Manager] &quot;;</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            default:
+&nbsp;                break;
+&nbsp;        }
+<b class="nc">&nbsp;        sessionUsernameMap.put(session, username);</b>
+<b class="nc">&nbsp;        usernameSessionMap.put(username, session);</b>
+<b class="nc">&nbsp;        usernamePrefix.put(username, prefix);</b>
+<b class="nc">&nbsp;        usernameUserMap.put(username, user);</b>
+<b class="nc">&nbsp;        userUsernameMap.put(user, username);</b>
+<b class="nc">&nbsp;        String message = &quot;User:&quot; + &quot; &quot; + prefix + username + &quot; has Joined the Chat&quot;;</b>
+<b class="nc">&nbsp;        broadcast(message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnMessage
+&nbsp;    public void onMessage(Session session, String message) throws IOException {
+&nbsp;        // Handle new messages
+<b class="nc">&nbsp;        logger.info(&quot;Entered into Message: Got Message:&quot; + message);</b>
+<b class="nc">&nbsp;        String username = sessionUsernameMap.get(session);</b>
+<b class="nc">&nbsp;        String prefix = usernamePrefix.get(username);</b>
+<b class="nc">&nbsp;        User user = null;</b>
+<b class="nc">&nbsp;        if (message.startsWith(&quot;@&quot;)) // Direct message to a user using the format &quot;@username &lt;message&gt;&quot;</b>
+&nbsp;        {
+<b class="nc">&nbsp;            String destUsername = message.split(&quot; &quot;)[0].substring(1); // don&#39;t do this in your code!</b>
+<b class="nc">&nbsp;            if(destUsername.equals(&quot;Athletes&quot;))</b>
+&nbsp;            {
+<b class="nc">&nbsp;                user = usernameUserMap.get(username);</b>
+<b class="nc">&nbsp;                if(user == null) return;</b>
+<b class="nc">&nbsp;                Coach coach = user.getCoach();</b>
+<b class="nc">&nbsp;                if(coach == null) return;</b>
+<b class="nc">&nbsp;                List&lt;Athlete&gt; athleteList = athleteRepository.findAll();</b>
+<b class="nc">&nbsp;                int athleteUserId = 0;</b>
+<b class="nc">&nbsp;                for(Athlete athlete: athleteList) {</b>
+<b class="nc">&nbsp;                    athleteUserId = athlete.getUser().getId();</b>
+<b class="nc">&nbsp;                    if(athlete.getCoach() != null &amp;&amp; athlete.getCoach().getId() == coach.getId())</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        user = userRepository.findById(athleteUserId);</b>
+<b class="nc">&nbsp;                        destUsername = user.getEmailAddress().split(&quot;@&quot;)[0];</b>
+<b class="nc">&nbsp;                        if(usernamePrefix.containsKey(destUsername)){</b>
+<b class="nc">&nbsp;                            if(message.split(&quot; &quot;).length &gt; 1) message = message.split(&quot; &quot;)[1];</b>
+<b class="nc">&nbsp;                            sendMessageToPArticularUser(destUsername, &quot;[Coach Broadcast] &quot; +</b>
+&nbsp;                                    prefix + username + &quot;:&quot; + message);
+&nbsp;                        }
+&nbsp;                    }
+<b class="nc">&nbsp;                }</b>
+<b class="nc">&nbsp;                sendMessageToPArticularUser(username, &quot;[Coach Broadcast] &quot; + prefix + username +</b>
+&nbsp;                        &quot;:&quot; + message);
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            else if(destUsername.equals(&quot;Coaches&quot;)) {</b>
+<b class="nc">&nbsp;                user = usernameUserMap.get(username);</b>
+<b class="nc">&nbsp;                if(user == null) return;</b>
+<b class="nc">&nbsp;                Manager manager = user.getManager();</b>
+<b class="nc">&nbsp;                if(manager == null) return;</b>
+<b class="nc">&nbsp;                List&lt;Coach&gt; coachList = coachRepository.findAll();</b>
+<b class="nc">&nbsp;                int coachUserId = 0;</b>
+<b class="nc">&nbsp;                for(Coach coach: coachList) {</b>
+<b class="nc">&nbsp;                    coachUserId = coach.getUser().getId();</b>
+<b class="nc">&nbsp;                    if(coach.getManager() != null &amp;&amp; coach.getManager().getId() == manager.getId())</b>
+&nbsp;                    {
+<b class="nc">&nbsp;                        user = userRepository.findById(coachUserId);</b>
+<b class="nc">&nbsp;                        destUsername = user.getEmailAddress().split(&quot;@&quot;)[0];</b>
+<b class="nc">&nbsp;                        if(usernamePrefix.containsKey(destUsername)){</b>
+<b class="nc">&nbsp;                            if(message.split(&quot; &quot;).length &gt; 1) message = message.split(&quot; &quot;)[1];</b>
+<b class="nc">&nbsp;                            sendMessageToPArticularUser(destUsername, &quot;[Manager Broadcast] &quot; +</b>
+&nbsp;                                    prefix + username + &quot;:&quot; + message);
+&nbsp;                        }
+&nbsp;                    }
+<b class="nc">&nbsp;                }</b>
+<b class="nc">&nbsp;                sendMessageToPArticularUser(username, &quot;[Manager Broadcast] &quot; + prefix + username +</b>
+&nbsp;                        &quot;:&quot; + message);
+<b class="nc">&nbsp;            }</b>
+&nbsp;            else {
+<b class="nc">&nbsp;                sendMessageToPArticularUser(destUsername, &quot;[DM] &quot; + prefix + username + &quot;: &quot; + message);</b>
+<b class="nc">&nbsp;                sendMessageToPArticularUser(username, &quot;[DM] &quot; + prefix + username + &quot;: &quot; + message);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } else // Message to whole chat</b>
+&nbsp;        {
+<b class="nc">&nbsp;            broadcast(prefix + username + &quot;: &quot; + message);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnClose
+&nbsp;    public void onClose(Session session) throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Entered into Close&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        String username = sessionUsernameMap.get(session);</b>
+<b class="nc">&nbsp;        String prefix = usernamePrefix.get(username);</b>
+<b class="nc">&nbsp;        sessionUsernameMap.remove(session);</b>
+<b class="nc">&nbsp;        usernameSessionMap.remove(username);</b>
+<b class="nc">&nbsp;        usernamePrefix.remove(username);</b>
+<b class="nc">&nbsp;        usernameUserMap.remove(username);</b>
+<b class="nc">&nbsp;        String message = prefix + username + &quot; disconnected&quot;;</b>
+<b class="nc">&nbsp;        broadcast(message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnError
+&nbsp;    public void onError(Session session, Throwable throwable) {
+&nbsp;        // Do error handling here
+<b class="nc">&nbsp;        logger.info(&quot;Entered into Error&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void sendMessageToPArticularUser(String username, String message) {
+&nbsp;        try {
+<b class="nc">&nbsp;            usernameSessionMap.get(username).getBasicRemote().sendText(message);</b>
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            logger.info(&quot;Exception: &quot; + e.getMessage().toString());</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void broadcast(String message) {
+<b class="nc">&nbsp;        sessionUsernameMap.forEach((session, username) -&gt; {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                session.getBasicRemote().sendText(message);</b>
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+<b class="nc">&nbsp;                logger.info(&quot;Exception: &quot; + e.getMessage().toString());</b>
+<b class="nc">&nbsp;                e.printStackTrace();</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+&nbsp;        });
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-05-04 13:05</div>
+</div>
+</body>
+</html>

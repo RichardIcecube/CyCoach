@@ -1,0 +1,263 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > WorkoutController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">coms309.Workout</a>
+</div>
+
+<h1>Coverage Summary for Class: WorkoutController (coms309.Workout)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WorkoutController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.2%
+  </span>
+  <span class="absValue">
+    (49/52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package coms309.Workout;
+&nbsp;
+&nbsp;import coms309.Coaches.Coach;
+&nbsp;import coms309.Coaches.CoachRepository;
+&nbsp;import coms309.Exercises.Exercise;
+&nbsp;import coms309.Exercises.ExerciseRepository;
+&nbsp;import coms309.Users.User;
+&nbsp;import io.swagger.annotations.Api;
+&nbsp;import io.swagger.annotations.ApiOperation;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PutMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestBody;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * @author Richard Bach
+&nbsp; */
+&nbsp;
+&nbsp;@Api(value = &quot;Workout Controller&quot;, description = &quot;REST API related to Workout Entity&quot;, tags = &quot;WorkoutController&quot;)
+&nbsp;@RestController
+<b class="fc">&nbsp;public class WorkoutController {</b>
+&nbsp;    @Autowired
+&nbsp;    WorkoutRepository workoutRepository;
+&nbsp;    @Autowired
+&nbsp;    CoachRepository coachRepository;
+&nbsp;    @Autowired
+&nbsp;    ExerciseRepository exerciseRepository;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a list of all saved Workouts in the database&quot;, response = Workout.class, tags = &quot;listAllWorkouts&quot;)
+&nbsp;    @GetMapping(path = &quot;/workouts&quot;)
+&nbsp;    List&lt;Workout&gt; listAllWorkouts()
+&nbsp;    {
+<b class="fc">&nbsp;        return workoutRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a specific workout by id&quot;, response = Workout.class, tags=&quot;getWorkoutById&quot;)
+&nbsp;    @GetMapping(path = &quot;/workouts/{id}&quot;)
+&nbsp;    Workout getWorkoutById(@PathVariable int id)
+&nbsp;    {
+<b class="fc">&nbsp;        return workoutRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Create a new workout&quot;, response = String.class, tags = &quot;createWorkout&quot;)
+&nbsp;    @PostMapping(path = &quot;/workouts&quot;)
+&nbsp;    String createWorkout(@RequestBody Workout workout)
+&nbsp;    {
+<b class="fc">&nbsp;        if(workout == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return failure;</b>
+&nbsp;        }
+&nbsp;        //What to do about nulls? They are not detected by this
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(workout.getExercise().getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            workout.setExercise(exerciseRepository.findByName((workout.getExercise().getExerciseName())));</b>
+&nbsp;        }
+&nbsp;        else
+&nbsp;        {
+<b class="fc">&nbsp;            exerciseRepository.save(workout.getExercise());</b>
+<b class="fc">&nbsp;            workout.setExercise(workout.getExercise());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Update a workout&quot;, response = Workout.class, tags = &quot;updateWorkout&quot;)
+&nbsp;    @PutMapping(path = &quot;/workouts/{id}&quot;)
+&nbsp;    Workout updateWorkout(@PathVariable int id, @RequestBody Workout request)
+&nbsp;    {
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        workout.setReps(request.getReps());</b>
+<b class="fc">&nbsp;        workout.setRest(request.getRest());</b>
+<b class="fc">&nbsp;        workout.setDuration(request.getDuration());</b>
+<b class="fc">&nbsp;        workout.setSets(request.getSets());</b>
+<b class="fc">&nbsp;        if(exerciseRepository.findByName(request.getExercise().getExerciseName()) != null)</b>
+&nbsp;        {
+<b class="fc">&nbsp;            workout.setExercise(exerciseRepository.findByName(request.getExercise().getExerciseName()));</b>
+&nbsp;        }
+&nbsp;        else
+&nbsp;        {
+<b class="fc">&nbsp;            exerciseRepository.save(request.getExercise());</b>
+<b class="fc">&nbsp;            workout.setExercise(request.getExercise());</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return workoutRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a workouts exercise&quot;, response = Exercise.class, tags = &quot;getWorkoutExercise&quot;)
+&nbsp;    @GetMapping(path = &quot;/workouts/{id}/exercises&quot;)
+&nbsp;    Exercise getWorkoutExercise(@PathVariable int id)
+&nbsp;    {
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return workout.getExercise();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a workouts video&quot;, response = String.class, tags = &quot;getWorkoutVideo&quot;)
+&nbsp;    @GetMapping(path = &quot;/workouts/{id}/video&quot;)
+&nbsp;    String getWorkoutVideo(@PathVariable int id)
+&nbsp;    {
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null) return null;</b>
+<b class="fc">&nbsp;        return workout.getVideo();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Update a workouts video&quot;, response = Workout.class, tags = &quot;updateWorkoutVideo&quot;)
+&nbsp;    @PutMapping(path = &quot;/workouts/{id}/video&quot;)
+&nbsp;    Workout updateWorkoutVideo(@PathVariable int id, @RequestBody String videoUrl) {
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null) return null;</b>
+<b class="fc">&nbsp;        workout.setVideo(videoUrl);</b>
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return workoutRepository.findById(id);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Get a workouts coach&quot;, response = Coach.class, tags = &quot;getCoach&quot;)
+&nbsp;    @GetMapping(path = &quot;/workouts/{id}/coach&quot;)
+&nbsp;    Coach getCoach(@PathVariable int id){
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null) return null;</b>
+<b class="fc">&nbsp;        return workout.getCoach();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Update a coach&quot;, response = String.class, tags = &quot;updateCoach&quot;)
+&nbsp;    @PutMapping(path = &quot;/workouts/{id}/coach&quot;)
+&nbsp;    String updateCoach(@PathVariable int id, @RequestBody Coach coach){
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(id);</b>
+<b class="fc">&nbsp;        if(workout == null) return failure;</b>
+<b class="fc">&nbsp;        workout.setCoach(coach);</b>
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ApiOperation(value = &quot;Update a coach by their id&quot;, response = String.class, tags = &quot;updateCoachById&quot;)
+&nbsp;    @PutMapping(path = &quot;/workouts/{workoutId}/coach/{coachId}&quot;)
+&nbsp;    String updateCoachById(@PathVariable int workoutId, @PathVariable int coachId){
+<b class="fc">&nbsp;        Workout workout = workoutRepository.findById(workoutId);</b>
+<b class="fc">&nbsp;        Coach coach = coachRepository.findById(coachId);</b>
+<b class="fc">&nbsp;        if(coach == null || workout == null) return failure;</b>
+<b class="fc">&nbsp;        workout.setCoach(coach);</b>
+<b class="fc">&nbsp;        workoutRepository.save(workout);</b>
+<b class="fc">&nbsp;        return success;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-05-04 13:05</div>
+</div>
+</body>
+</html>
